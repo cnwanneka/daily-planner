@@ -1,52 +1,46 @@
+$(function () {});
 
-$(document).ready(function() {
-    var workdayStart = moment().hour(9).minute(0).second(0);
-    var workdayEnd = moment().hour(17).minute(0).second(0);
-    var html = '';
-    while (workdayStart.isBefore(workdayEnd)) {
-        html += '<div class="time-slot">';
-        html += '<div class="time">' + workdayStart.format('h:mm A') + '</div>';
-        html += '<div class="event" data-time="' + workdayStart.format('h:mm A') + '"></div>';
-        html += '</div>';
-        workdayStart.add(1, 'hour');
-    }
-    $('#workday').append(html);
+let today = moment().format("dddd, Do MMMM");
 
-    $('form').on('submit', function(event) {
-        event.preventDefault();
-        var eventName = $('#event-name').val();
-        var eventTime = $('#event-time').val();
-        var eventHTML = '<div><h3>' + eventName + '</h3><p>' + moment(eventTime).format('h:mm A') + '</p></div>';
-        $('.event[data-time="' + moment(eventTime).format('h:mm A') + '"]').html(eventHTML);
-        localStorage.setItem(moment(eventTime).format('h:mm A'), eventName);
-    });
+let now = moment().format("H A");
 
-    for (var i = 0; i < localStorage.length; i++) {
-        var eventTime = localStorage.key(i);
-        var eventName = localStorage.getItem(eventTime);
-        var eventHTML = '<div><h3>' + eventName + '</h3><p>' + eventTime + '</
+/* Entries for each hour of the workday */
 
+let planWorkday = [
+    { time: "9 AM", event: "" },
+    { time: "10 AM", event: "" },
+    { time: "11 AM", event: "" },
+    { time: "12 PM", event: "" },
+    { time: "1 PM", event: "" },
+    { time: "2 PM", event: "" },
+    { time: "3 PM", event: "" },
+    { time: "4 PM", event: "" },
+    { time: "5 PM", event: "" },
+];
 
+/* Store events in local storage */
+let workEvents = JSON.parse(localStorage.getItem("workDay"));
+if (workEvents) {
+    planWorkday = workEvents;
+}
 
+$("#currentDay").text(today);
 
+/* Creating the rows */
+planWorkday.forEach(function(timeBlock, index) {
+	let timeLabel = timeBlock.time;
+	let blockColor = colorRow(timeLabel);
+	let row =
+		'<div class="time-block" id="' +
+		index +
+		'"><div class="row no-gutters input-group"><div class="col-sm col-lg-1 input-group-prepend hour justify-content-sm-end pr-3 pt-3">' +
+		timeLabel +
+		'</div><textarea class="form-control ' +
+		blockColor +
+		'">' +
+		timeBlock.event +
+		'</textarea><div class="col-sm col-lg-1 input-group-append"><button class="saveBtn btn-block" type="submit"><i class="fas fa-save"></i></button></div></div></div>';
 
-
-
-
-
-
-
-
-// Getting the button that was clicked.
-
-$("button").on("click", function(event){
-
-    console.log($(event.target).siblings("textarea").val())
-
-
-})
-
-
-
-
+	/* Adding rows to container div */
+	$(".container").append(row);
 });
