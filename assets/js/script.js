@@ -45,7 +45,7 @@ planWorkday.forEach(function(timeBlock, index) {
 	$(".container").append(row);
 });
 
-/* Color the rows based on current time */
+/* Add color to the rows based on the current time */
 function colorRow(time) {
 	let planNow = moment(now, "H A");
 	let planEntry = moment(time, "H A");
@@ -57,3 +57,22 @@ function colorRow(time) {
 		return "present";
 	}
 }
+
+/* Save the events */
+$(".saveBtn").on("click", function() {
+	let blockID = parseInt(
+		$(this)
+			.closest(".time-block")
+			.attr("id")
+	);
+	let userEntry = $.trim(
+		$(this)
+			.parent()
+			.siblings("textarea")
+			.val()
+	);
+	planWorkday[blockID].event = userEntry;
+
+	/* Set up the local storage */
+	localStorage.setItem("workDay", JSON.stringify(planWorkday));
+});
